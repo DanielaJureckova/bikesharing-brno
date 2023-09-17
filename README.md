@@ -1,1 +1,1 @@
-# projectCzechitas
+# Czechitas project
