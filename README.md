@@ -1,2 +1,2 @@
 # Bike sharing
-project procedure and documentation for Data academy
+project procedure and documentation for Bike sharing project in Data academy
