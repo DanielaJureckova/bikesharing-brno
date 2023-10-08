@@ -5,8 +5,6 @@ import time
 import json
 import requests
 
-
-
 url = 'https://api.nextbike.net/maps/nextbike-live.json?city=660'
 response = requests.get(url).json()
 timestr = time.strftime("%Y%m%d-%H%M%S")
