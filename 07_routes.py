@@ -2,7 +2,7 @@ import openrouteservice
 from openrouteservice import convert
 from openrouteservice.directions import directions
 import pprint
-
+import json
 import geopandas
 
 coords = ((16.61304474,49.19127175),(16.59422636,49.21028027))
@@ -16,6 +16,5 @@ pprint.pprint(routes)
 
 print(decoded)
 
-gdf = geopandas.GeoDataFrame.from_features(decoded)  
-gdf = gdf.set_crs(4326)
-gdf.explore()
+with open("07_routes_01_nextbike.json", mode="w", encoding="utf-8") as outputfile:
+    json.dump(decoded, outputfile)
