@@ -6,3 +6,4 @@ test commit message
 Test commit od Ondry
 
 ## test markdown
+# test 2
