@@ -12,14 +12,14 @@ def append_data_of_23_dataset(inputDf):
         inputDf['start_time'], format='mixed')
     inputDf['end_time'] = pd.to_datetime(
         inputDf['end_time'], format='mixed')
-    inputDf['rok_s'] = pd.to_datetime(inputDf['start_time'], format='mixed').dt.year
-    inputDf['mesic_s'] = pd.to_datetime(inputDf['start_time'], format='mixed').dt.month
-    inputDf['den_s'] = pd.to_datetime(inputDf['start_time'], format='mixed').dt.dayofweek
-    inputDf['hodina_s'] = pd.to_datetime(inputDf['start_time'], format='mixed').dt.hour
-    inputDf['rok_k'] = pd.to_datetime(inputDf['end_time'], format='mixed').dt.year
-    inputDf['mesic_k'] = pd.to_datetime(inputDf['end_time'], format='mixed').dt.month
-    inputDf['den_k'] = pd.to_datetime(inputDf['end_time'], format='mixed').dt.dayofweek
-    inputDf['hodina_k'] = pd.to_datetime(inputDf['end_time'], format='mixed').dt.hour
+    # inputDf['rok_s'] = pd.to_datetime(inputDf['start_time'], format='mixed').dt.year
+    # inputDf['mesic_s'] = pd.to_datetime(inputDf['start_time'], format='mixed').dt.month
+    # inputDf['den_s'] = pd.to_datetime(inputDf['start_time'], format='mixed').dt.dayofweek
+    # inputDf['hodina_s'] = pd.to_datetime(inputDf['start_time'], format='mixed').dt.hour
+    # inputDf['rok_k'] = pd.to_datetime(inputDf['end_time'], format='mixed').dt.year
+    # inputDf['mesic_k'] = pd.to_datetime(inputDf['end_time'], format='mixed').dt.month
+    # inputDf['den_k'] = pd.to_datetime(inputDf['end_time'], format='mixed').dt.dayofweek
+    # inputDf['hodina_k'] = pd.to_datetime(inputDf['end_time'], format='mixed').dt.hour
 
 #print(data23.dtypes)
 
@@ -45,13 +45,11 @@ for column in columns_23:
         print(f"sloupec co neni v roce 22 je {column}")
 
 
-# data23.drop(columns="Unnamed", inplace=True)
 data22.drop(columns=columns_22_to_drop, axis=1, inplace=True)
 
 frames = [data22, data23]
 result = pd.concat(frames)   
 
-# frames.drop(columns="Unnamed", inplace=True)
 print(frames)
 result.to_csv("./Data/merged/next_rekola_both.csv", index=False)
 

@@ -82,7 +82,6 @@ if merge23:
     rekola23['company'] = 'rekola'
     nextBike23['company'] = 'nextbike'
 
-    #Append data rekola23 of start_place and end_place here 
 
     rekola23_columns = rekola23.columns
     nextBike23_columns = nextBike23.columns
