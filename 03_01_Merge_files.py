@@ -39,12 +39,19 @@ if merge_22:
     rekola22_columns = rekola22.columns
     nextBike22_columns = nextBike22.columns
 
+    if rekola22['rental_id'].isnull().any():
+        print('Existuji radky s NaN v sloupci rental_id')
+        rekola22.dropna(subset=['rental_id'], inplace=True)
+    else: 
+        print('neexistuji radky s NaN v sloupci rental_id')
+
+
     if len(rekola22_columns) != len(nextBike22_columns):
         print(
             f"neshoda v poctu sloupcu rekloa maji {len(rekola22_columns)} a nextbike maji {len(nextBike22_columns)}")
 
-    print(nextBike22_columns)
-    print(rekola22_columns)
+    # print(nextBike22_columns)
+    # print(rekola22_columns)
     rekola_columns_to_drop = []
     for column in rekola22_columns:
         if column not in nextBike22_columns:
