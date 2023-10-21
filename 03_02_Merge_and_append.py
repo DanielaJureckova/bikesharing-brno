@@ -47,25 +47,31 @@ for column in columns_23:
 
 data22.drop(columns=columns_22_to_drop, axis=1, inplace=True)
 
+# print(data22)
+
 columns_to_convert = ['start_latitude', 'start_longitude', 'end_latitude', 'end_longitude']
 for column in columns_to_convert:
     data22[column] = data22[column].apply(lambda x: float(str(x).replace(',', '.')))
     data23[column] = data23[column].apply(lambda x: float(str(x).replace(',', '.')))
 
-print(data23.dtypes)
-print(data23)
+# print(data23.dtypes)
+# print(data23)
 
 # data22.info()
 # data23.info()
 
 frames = [data22, data23]
-result = pd.concat(frames)   
+result = pd.concat(frames)  
+result = result.dropna(subset=['start_longitude'])
 
-print(result.dtypes)
+
+# print(result.dtypes)
+
+# rows_with_missing_values = result[result.isnull().any(axis=1)]
+# print(rows_with_missing_values)
 
 # print(frames)
 result.to_csv("./Data/merged/next_rekola_both.csv", index=False)
-
 
 #print(columns_22_to_drop)
 #print(columns_23_to_drop)
