@@ -3,7 +3,7 @@ import csv
 import pandas as pd
 import datetime
 
-merge_22 = False
+merge_22 = True
 merge23 = True
 renamingForNextBike = {'start_lat': "start_latitude",
                        "start_lng": "start_longitude",
@@ -11,7 +11,6 @@ renamingForNextBike = {'start_lat': "start_latitude",
                        "end_lng": "end_longitude",
                        'doration': "duration",
                        "customer": "user_id",
-
                        }
 
 
@@ -25,7 +24,6 @@ renaming_for_next_bike_23 = {'duration_in_seconds': "duration", 'customer_id': '
 renaming_for_rekola_23 = {'timediff': "duration"}
 
 
-
 if merge_22:
     rekola22 = pd.read_csv(
         './Data/2022/rekola_22.csv', header=0, delimiter=';')
@@ -34,6 +32,9 @@ if merge_22:
 
     nextBike22.rename(renamingForNextBike, axis='columns', inplace=True)
     rekola22.rename(renamingForRekola, axis='columns', inplace=True)
+
+    rekola22['company'] = 'rekola'
+    nextBike22['company'] = 'nextbike'
 
     rekola22_columns = rekola22.columns
     nextBike22_columns = nextBike22.columns
@@ -78,7 +79,9 @@ if merge23:
     nextBike23.rename(renaming_for_next_bike_23, axis='columns', inplace=True)
     rekola23.rename(renaming_for_rekola_23, axis='columns', inplace=True)
 
-
+    rekola23['company'] = 'rekola'
+    nextBike23['company'] = 'nextbike'
+    
     #Append data rekola23 of start_place and end_place here 
 
     rekola23_columns = rekola23.columns
