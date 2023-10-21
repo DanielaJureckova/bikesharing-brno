@@ -64,7 +64,7 @@ if merge_22:
 
     frames = [nextBike22, rekola22]
     result = pd.concat(frames)
-    result.to_csv("./Data/merged/next_rekola_22.csv")
+    result.to_csv("./Data/merged/next_rekola_22.csv", index=False)
 
 if merge23:
     rekola23 = pd.read_csv(
@@ -81,7 +81,7 @@ if merge23:
 
     rekola23['company'] = 'rekola'
     nextBike23['company'] = 'nextbike'
-    
+
     #Append data rekola23 of start_place and end_place here 
 
     rekola23_columns = rekola23.columns
@@ -113,7 +113,7 @@ if merge23:
     result = pd.concat(frames)   
 
 
-    result.to_csv("./Data/merged/next_rekola_23.csv")
+    result.to_csv("./Data/merged/next_rekola_23.csv", index=False)
 
 # print(nextBike22.columns)
 # print(rek)

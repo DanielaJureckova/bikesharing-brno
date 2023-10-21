@@ -45,15 +45,15 @@ for column in columns_23:
         print(f"sloupec co neni v roce 22 je {column}")
 
 
-
+# data23.drop(columns="Unnamed", inplace=True)
 data22.drop(columns=columns_22_to_drop, axis=1, inplace=True)
-
 
 frames = [data22, data23]
 result = pd.concat(frames)   
 
-
-result.to_csv("./Data/merged/next_rekola_both.csv")
+# frames.drop(columns="Unnamed", inplace=True)
+print(frames)
+result.to_csv("./Data/merged/next_rekola_both.csv", index=False)
 
 #print(columns_22_to_drop)
 #print(columns_23_to_drop)
