@@ -39,12 +39,19 @@ if merge_22:
     rekola22_columns = rekola22.columns
     nextBike22_columns = nextBike22.columns
 
+    if rekola22['rental_id'].isnull().any():
+        print('Existuji radky s NaN v sloupci rental_id')
+        rekola22.dropna(subset=['rental_id'], inplace=True)
+    else: 
+        print('neexistuji radky s NaN v sloupci rental_id')
+
+
     if len(rekola22_columns) != len(nextBike22_columns):
         print(
             f"neshoda v poctu sloupcu rekloa maji {len(rekola22_columns)} a nextbike maji {len(nextBike22_columns)}")
 
-    print(nextBike22_columns)
-    print(rekola22_columns)
+    # print(nextBike22_columns)
+    # print(rekola22_columns)
     rekola_columns_to_drop = []
     for column in rekola22_columns:
         if column not in nextBike22_columns:
@@ -56,6 +63,8 @@ if merge_22:
             nextBike_columns_to_drop.append(column)
             print(f"sloupec co neni v rekola je {column}")
 
+    
+
     nextBike22.drop(columns=nextBike_columns_to_drop, axis=1, inplace=True)
     rekola22.drop(columns=rekola_columns_to_drop, axis=1, inplace=True)
 
@@ -64,7 +73,8 @@ if merge_22:
 
     frames = [nextBike22, rekola22]
     result = pd.concat(frames)
-    result.to_csv("./Data/merged/next_rekola_22.csv")
+    result.to_csv("./Data/merged/next_rekola_22.csv", index=False)
+
 
 if merge23:
     rekola23 = pd.read_csv(
@@ -81,8 +91,7 @@ if merge23:
 
     rekola23['company'] = 'rekola'
     nextBike23['company'] = 'nextbike'
-    
-    #Append data rekola23 of start_place and end_place here 
+
 
     rekola23_columns = rekola23.columns
     nextBike23_columns = nextBike23.columns
@@ -113,9 +122,8 @@ if merge23:
     result = pd.concat(frames)   
 
 
-    result.to_csv("./Data/merged/next_rekola_23.csv")
+    result.to_csv("./Data/merged/next_rekola_23.csv", index=False)
 
 # print(nextBike22.columns)
-# print(rek)
-
+# print(rekola22.columns)
 
