@@ -21,7 +21,7 @@ def find_start_location(row):
                            (station['lat'], station['lgn'])).kilometers
         if distance < min_distance:
             min_distance = distance
-            if min_distance < 0.05:
+            if min_distance < 0.06:
                 start_location = station['address']
             else:
                 start_location = "N/A"
@@ -43,9 +43,9 @@ def find_end_location(row):
                 
     return end_location
 
-trips = pd.read_csv("next_rekola_both_short.csv")
+trips = pd.read_csv("next_rekola_both.csv")
 
-stations_all = pd.read_csv("stations_all.csv")
+stations_all = pd.read_csv("stations_all2.csv")
 
 stations = stations_all.to_dict(orient='records')
 
@@ -54,7 +54,7 @@ trips['start_location'] = trips.apply(find_start_location, axis=1)
 trips['end_location'] = trips.apply(find_end_location, axis=1)
 
 
-trips.to_csv("data_with_addresses.csv", index = False)
+trips.to_csv("data_with_addresses2.csv", index = False)
 
 
 
