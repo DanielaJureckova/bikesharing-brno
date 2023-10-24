@@ -5,7 +5,9 @@ import json
 from geopy.geocoders import Nominatim
 from geopy.distance import geodesic
 
-#v datech manuální edit na řádku 153307: upravena lat z 49183.0 na 49.183
+
+# addition of the closest start/end station (address) to each row, exact gps
+# v datech manuální edit na řádku 153307: upravena lat z 49183.0 na 49.183
 
 def get_distance(place1, place2):
     distance = geodesic(place1, place2).kilometers  
@@ -52,7 +54,7 @@ trips['start_location'] = trips.apply(find_start_location, axis=1)
 trips['end_location'] = trips.apply(find_end_location, axis=1)
 
 
-print(trips.head())
+trips.to_csv("data_with_addresses.csv", index = False)
 
 
 
