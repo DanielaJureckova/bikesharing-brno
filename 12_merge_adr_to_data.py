@@ -5,50 +5,54 @@ import json
 from geopy.geocoders import Nominatim
 from geopy.distance import geodesic
 
+#v datech manuální edit na řádku 153307: upravena lat z 49183.0 na 49.183
+
 def get_distance(place1, place2):
     distance = geodesic(place1, place2).kilometers  
     return distance
 
+def find_start_location(row):
+    min_distance = float('inf')
+    start_location = None
+    for station in stations:
+        distance = geodesic((row['start_latitude'], row['start_longitude']),
+                           (station['lat'], station['lgn'])).kilometers
+        if distance < min_distance:
+            min_distance = distance
+            if min_distance < 0.05:
+                start_location = station['address']
+            else:
+                start_location = "N/A"
+                
+    return start_location
 
-trips = pd.read_csv("./data_brno/next_rekola_both.csv")
+def find_end_location(row):
+    min_distance = float('inf')
+    end_location = None
+    for station in stations:
+        distance = geodesic((row['end_latitude'], row['end_longitude']),
+                           (station['lat'], station['lgn'])).kilometers
+        if distance < min_distance:
+            min_distance = distance
+            if min_distance < 0.05:
+                end_location = station['address']
+            else:
+                end_location = "N/A"
+                
+    return end_location
 
-stations = pd.read_csv("stations_all.csv")
-stations_list = stations.to_dict(orient='records')
+trips = pd.read_csv("next_rekola_both_short.csv")
+
+stations_all = pd.read_csv("stations_all.csv")
+
+stations = stations_all.to_dict(orient='records')
+
+# Přiřazení nejbližšího názvu lokality k GPS souřadnicím
+trips['start_location'] = trips.apply(find_start_location, axis=1)
+trips['end_location'] = trips.apply(find_end_location, axis=1)
 
 
-trips["start_address"] = ""
-
-index = 0
-
-for row in range(len(trips)):
-    s_lat = trips.loc[row, "start_latitude"]
-    s_lon = trips.loc[row, "start_longitude"]
-    e_lat = trips.loc[row, "end_latitude"]
-    e_lon = trips.loc[row, "end_longitude"]
-
-    for station in stations_list:
-        distance_start = get_distance((s_lat, s_lon), (station["lat"], station["lgn"]))
-        station["distance_start"] = distance_start
-        distance_end = get_distance((e_lat, e_lon), (station["lat"], station["lgn"]))
-        station["distance_end"] = distance_end
-        
-        
-    
-    min_distance_start = min(stations_list, key=lambda x: x["distance_start"])
-    if min_distance_start["distance_start"] < 0.05:
-        trips.loc[row, "start_address"] = min_distance_start["address"]
-    else:
-        trips.loc[row, "start_address"] = "N/A"
-
-    
-    min_distance_end = min(stations_list, key=lambda x: x["distance_end"])
-    if min_distance_end["distance_end"] < 0.05:
-        trips.loc[row, "end_address"] = min_distance_end["address"]
-    else:
-        trips.loc[row, "end_address"] = "N/A"
-
-    
-trips.to_csv("new_data.csv")
+print(trips.head())
 
 
 
