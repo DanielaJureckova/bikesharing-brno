@@ -21,8 +21,8 @@ def find_start_location(row):
                            (station['lat'], station['lgn'])).kilometers
         if distance < min_distance:
             min_distance = distance
-            if min_distance < 0.06:
-                start_location = station['address']
+            if min_distance < 0.05:
+                start_location = station['Unnamed: 0']
             else:
                 start_location = "N/A"
                 
@@ -36,8 +36,8 @@ def find_end_location(row):
                            (station['lat'], station['lgn'])).kilometers
         if distance < min_distance:
             min_distance = distance
-            if min_distance < 0.05:
-                end_location = station['address']
+            if min_distance < 0.10:
+                end_location = station['Unnamed: 0']
             else:
                 end_location = "N/A"
                 
@@ -45,9 +45,10 @@ def find_end_location(row):
 
 trips = pd.read_csv("next_rekola_both.csv")
 
-stations_all = pd.read_csv("stations_all2.csv")
+stations_all = pd.read_csv("stations_with_elev.csv")
 
 stations = stations_all.to_dict(orient='records')
+
 
 # Přiřazení nejbližšího názvu lokality k GPS souřadnicím
 trips['start_location'] = trips.apply(find_start_location, axis=1)
