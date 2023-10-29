@@ -3,7 +3,7 @@ import csv
 import pandas as pd
 import datetime
 
-merge_22 = True
+merge_22 = False
 merge23 = True
 renamingForNextBike = {'start_lat': "start_latitude",
                        "start_lng": "start_longitude",
@@ -19,7 +19,8 @@ renamingForRekola = {"timediff": "duration",
                      "mesic_t_k": "mesic_k_t"
                      }
 
-renaming_for_next_bike_23 = {'duration_in_seconds': "duration", 'customer_id': 'user_id'}
+renaming_for_next_bike_23 = {
+    'duration_in_seconds': "duration", 'customer_id': 'user_id'}
 
 renaming_for_rekola_23 = {'timediff': "duration"}
 
@@ -42,9 +43,8 @@ if merge_22:
     if rekola22['rental_id'].isnull().any():
         print('Existuji radky s NaN v sloupci rental_id')
         rekola22.dropna(subset=['rental_id'], inplace=True)
-    else: 
+    else:
         print('neexistuji radky s NaN v sloupci rental_id')
-
 
     if len(rekola22_columns) != len(nextBike22_columns):
         print(
@@ -63,8 +63,6 @@ if merge_22:
             nextBike_columns_to_drop.append(column)
             print(f"sloupec co neni v rekola je {column}")
 
-    
-
     nextBike22.drop(columns=nextBike_columns_to_drop, axis=1, inplace=True)
     rekola22.drop(columns=rekola_columns_to_drop, axis=1, inplace=True)
 
@@ -73,6 +71,12 @@ if merge_22:
 
     frames = [nextBike22, rekola22]
     result = pd.concat(frames)
+
+    result['start_time'] = pd.to_datetime(
+        result['start_time'], format='%d.%m.%Y %H:%M')
+    
+    result['end_time'] = pd.to_datetime(
+        result['end_time'], format='%d.%m.%Y %H:%M')
     result.to_csv("./Data/merged/next_rekola_22.csv", index=False)
 
 
@@ -91,7 +95,6 @@ if merge23:
 
     rekola23['company'] = 'rekola'
     nextBike23['company'] = 'nextbike'
-
 
     rekola23_columns = rekola23.columns
     nextBike23_columns = nextBike23.columns
@@ -118,12 +121,22 @@ if merge23:
     if len(nextBike23.columns) == len(rekola23.columns):
         print(f"POG! Shoda v poctu sloupcu u obou datasetu")
 
-    frames = [nextBike23, rekola23]
-    result = pd.concat(frames)   
+    rekola23['start_time'] = pd.to_datetime(
+        rekola23['start_time'], format='%d.%m.%Y %H:%M')
 
+    nextBike23['start_time'] = pd.to_datetime(
+        nextBike23['start_time'], format='%d.%m.%Y %H:%M')
+    
+    nextBike23['end_time'] = pd.to_datetime(
+        nextBike23['end_time'], format='%d.%m.%Y %H:%M')
+    
+    rekola23['end_time'] = pd.to_datetime(
+        rekola23['end_time'], format='%d.%m.%Y %H:%M')
+
+    frames = [nextBike23, rekola23]
+    result = pd.concat(frames)
 
     result.to_csv("./Data/merged/next_rekola_23.csv", index=False)
 
 # print(nextBike22.columns)
 # print(rekola22.columns)
-
