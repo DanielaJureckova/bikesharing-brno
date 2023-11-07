@@ -84,14 +84,21 @@ with fig_col1:
             fill_opacity=1,
             popup=f"Value: {row['occupancy']}", tooltip = tooltip).add_to(brno_map)
 
-    st.markdown("## mapa")
-    st_data = st_folium(brno_map, width=1000)
+    st.markdown("### mapa")
+    #pokus 
+    make_map_responsive= """
+    <style>
+    [title~="st.iframe"] { width: 100%}
+    </style>
+    """
+    st.markdown(make_map_responsive, unsafe_allow_html=True)
+    st_data = st_folium(brno_map)
 
 
 
 
 with fig_col2:
-    st.markdown("## plné stanice (obsazenost > 98%)")
+    st.markdown("### plné stanice (obsazenost > 98%)")
     for a in stations_full:
         st.write(a)
  
