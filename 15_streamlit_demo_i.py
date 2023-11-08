@@ -24,7 +24,7 @@ stations["date-time"] = pd.to_datetime(stations["date-time"], format="%d/%m/%Y %
 official = pd.read_csv("23-11-05_nxtb_stations_scrap.csv")
 
 st.set_page_config(
-    page_title="Real-Time Data Science Dashboard",
+    page_title="Bikesharing Brno",
     page_icon="🚲",
     layout="wide",
 )
@@ -32,21 +32,32 @@ st.set_page_config(
 
 st.title("🚲🚲Oficiální nextbike stanice🚲🚲")
 
-st.sidebar.header("Time Filter Options")
+st.sidebar.header("Filtrování dle času")
 
 
 # Create sliders to select the start and end hours
-hour_range = st.sidebar.slider("Select Hour Range", 0, 23, (0, 23))
+hour_range = st.sidebar.slider("Vyberte hodinu", 0, 23, (0, 23))
 
 start_hour, end_hour = hour_range
 
-default_weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
-selected_weekdays = st.sidebar.multiselect("Select Weekdays", default_weekdays, default_weekdays)
+english_to_czech_day_names = {
+    "Monday": "Pondělí",
+    "Tuesday": "Úterý",
+    "Wednesday": "Středa",
+    "Thursday": "Čtvrtek",
+    "Friday": "Pátek",
+    "Saturday": "Sobota",
+    "Sunday": "Neděle"
+}
+
+default_weekdays = list(english_to_czech_day_names.values())
+
+selected_weekdays = st.sidebar.multiselect("Vyber dny", default_weekdays, default_weekdays)
 
 # Filter stations based on selected hours
 filtered_data = stations[
     (stations["date-time"].dt.hour >= start_hour) & (stations["date-time"].dt.hour <= end_hour) &
-    (stations["date-time"].dt.day_name().isin(selected_weekdays))
+    (stations["date-time"].dt.day_name().map(english_to_czech_day_names).isin(selected_weekdays))
 ]
 
 filtered_data["occupancy"] = filtered_data.apply(occup_zero_one, axis=1)
@@ -93,8 +104,6 @@ with fig_col1:
     """
     st.markdown(make_map_responsive, unsafe_allow_html=True)
     st_data = st_folium(brno_map)
-
-
 
 
 with fig_col2:
