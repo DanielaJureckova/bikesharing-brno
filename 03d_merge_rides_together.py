@@ -62,10 +62,14 @@ for column in columns_to_check:
 frames = [data22, data23, october23]
 result = pd.concat(frames)  
 
+print(f"pocet pred dropovanim prazdnych: {len(result.index)} ")
+
 for column in columns_to_check:
     result[column] = result[column].replace(0, np.nan)
 
 result = result.dropna(subset=columns_to_check)
+
+print(f"pocet podropovanim prazdnych: {len(result.index)} ")
 
 # print(result.dtypes)
 

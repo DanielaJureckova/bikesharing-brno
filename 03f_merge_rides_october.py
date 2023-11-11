@@ -17,6 +17,9 @@ nextBike23_october['company'] = 'nextbike'
 rekola23_october_columns = rekola23_october.columns
 nextBike23_october_columns = nextBike23_october.columns
 
+print(f"pocet pred rekola 23 october: {len(rekola23_october.index)} ")
+print(f"pocet pred nextbike 23 october: {len(nextBike23_october.index)} ")
+
 #remove columns
 rekola23_october_columns_to_remove = []
 for column in rekola23_october_columns:
@@ -52,7 +55,8 @@ for column in columns_to_check:
     nextBike23_october[column] = nextBike23_october[column].apply(lambda x: str(x).replace(',', ''))
     nextBike23_october[column] = nextBike23_october[column].apply(lambda x: float(x[:2] + "." + x[2:]))
 
-
+print(f"pocet po rekola 23 october: {len(rekola23_october.index)} ")
+print(f"pocet po nextbike 23 october: {len(nextBike23_october.index)} ")
 
 frames = [rekola23_october, nextBike23_october]
 result = pd.concat(frames)
