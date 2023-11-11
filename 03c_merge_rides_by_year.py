@@ -3,7 +3,7 @@ import csv
 import pandas as pd
 import datetime
 
-merge_22 = False
+merge_22 = True
 merge23 = True
 renamingForNextBike = {'start_lat': "start_latitude",
                        "start_lng": "start_longitude",
@@ -40,11 +40,11 @@ if merge_22:
     rekola22_columns = rekola22.columns
     nextBike22_columns = nextBike22.columns
 
-    if rekola22['rental_id'].isnull().any():
-        print('Existuji radky s NaN v sloupci rental_id')
-        rekola22.dropna(subset=['rental_id'], inplace=True)
-    else:
-        print('neexistuji radky s NaN v sloupci rental_id')
+    # if rekola22['rental_id'].isnull().any():
+    #     print('Existuji radky s NaN v sloupci rental_id')
+    #     rekola22.dropna(subset=['rental_id'], inplace=True)
+    # else:
+    #     print('neexistuji radky s NaN v sloupci rental_id')
 
     if len(rekola22_columns) != len(nextBike22_columns):
         print(
