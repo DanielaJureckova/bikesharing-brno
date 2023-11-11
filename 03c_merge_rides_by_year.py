@@ -40,15 +40,15 @@ if merge_22:
     rekola22_columns = rekola22.columns
     nextBike22_columns = nextBike22.columns
 
-    if rekola22['rental_id'].isnull().any():
-        print('Existuji radky s NaN v sloupci rental_id')
-        rekola22.dropna(subset=['rental_id'], inplace=True)
-    else:
-        print('neexistuji radky s NaN v sloupci rental_id')
+    # if rekola22['rental_id'].isnull().any():
+    #     print('Existuji radky s NaN v sloupci rental_id')
+    #     rekola22.dropna(subset=['rental_id'], inplace=True)
+    # else:
+    #     print('neexistuji radky s NaN v sloupci rental_id')
 
     if len(rekola22_columns) != len(nextBike22_columns):
         print(
-            f"neshoda v poctu sloupcu rekloa maji {len(rekola22_columns)} a nextbike maji {len(nextBike22_columns)}")
+            f"neshoda v poctu sloupcu rekola maji {len(rekola22_columns)} a nextbike maji {len(nextBike22_columns)}")
 
     # print(nextBike22_columns)
     # print(rekola22_columns)
@@ -85,6 +85,9 @@ if merge23:
         './Data/2023/rekola_23.csv', header=0, delimiter=';')
     nextBike23 = pd.read_excel(
         './Data/2023/nextbike_23_09.xlsx')
+
+    print(f"pocet pred rekola 23: {len(rekola23.index)} ")
+    print(f"pocet pred nextbike 23: {len(nextBike23.index)} ")
 
     if len(rekola23.columns) != len(nextBike23.columns):
         print(
@@ -132,6 +135,9 @@ if merge23:
     
     rekola23['end_time'] = pd.to_datetime(
         rekola23['end_time'], format='%d.%m.%Y %H:%M')
+
+    print(f"pocet po rekola 23: {len(rekola23.index)} ")
+    print(f"pocet po nextbike 23: {len(nextBike23.index)} ")
 
     frames = [nextBike23, rekola23]
     result = pd.concat(frames)
