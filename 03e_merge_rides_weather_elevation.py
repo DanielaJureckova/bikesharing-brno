@@ -3,9 +3,9 @@ import numpy as np
 
 
 df_rides = pd.read_csv(
-    './Data/merged/next_rekola_both.csv', header=0, delimiter=',')
+    './Data/merged/next_rekola_all.csv', header=0, delimiter=',')
 df_weather = pd.read_csv(
-    './Data/weather/weather-22-to-15-10-23.csv', header=0, delimiter=',')
+    './Data/weather/weather-22-to-05-11-23.csv', header=0, delimiter=',')
 df_elevation = pd.read_csv(
     './Data/elevation/23-10-26_data_with_location_elevation.csv', header=0, delimiter=',')
 
@@ -19,8 +19,7 @@ df_rides['start_time'] = pd.to_datetime(df_rides['start_time'])
 df_rides['end_time'] = pd.to_datetime(df_rides['end_time'])
 
 
-df_rides['duration_min'] = (
-    df_rides['end_time'] - df_rides['start_time']).dt.total_seconds() // 60
+df_rides['duration_min'] = (df_rides['end_time'] - df_rides['start_time']).dt.total_seconds() // 60
 df_rides.drop(columns="duration", inplace=True)
 
 # creation of join keys
@@ -41,8 +40,31 @@ df_rides_weather_elevation = pd.merge(
 
 
 #drop unnecessary columns
-df_rides_weather_elevation.drop(columns=["time-key","time"])
+df_rides_weather_elevation.drop(columns=["time-key","time"], inplace=True)
 
+#add datatime
 
-df_rides_weather_elevation.to_csv(
-    "./Data/merged/data_filtered_weather_elevation.csv", index=False)
+def add_datetime_components(inputDf):
+    inputDf['year'] = inputDf['start_time'].dt.year
+    inputDf['month'] = inputDf['start_time'].dt.month
+    inputDf['day'] = inputDf['start_time'].dt.day
+    inputDf['hour'] = inputDf['start_time'].dt.hour
+
+add_datetime_components(df_rides_weather_elevation)
+
+#drop start_latitude = 49
+df_rides_weather_elevation = df_rides_weather_elevation[df_rides_weather_elevation["start_latitude"] != 49]
+
+#add filter gps
+df_rides_weather_elevation = df_rides_weather_elevation[
+    (df_rides_weather_elevation["start_latitude"] < 49.263) & 
+    (df_rides_weather_elevation["end_latitude"] < 49.263) & 
+    (df_rides_weather_elevation["start_latitude"] > 49.116) & 
+    (df_rides_weather_elevation["end_latitude"] > 49.116) &
+    (df_rides_weather_elevation["start_longitude"] < 16.720) & 
+    (df_rides_weather_elevation["end_longitude"] < 16.720) & 
+    (df_rides_weather_elevation["start_longitude"] > 16.485) & 
+    (df_rides_weather_elevation["end_longitude"] > 16.485)
+]
+
+df_rides_weather_elevation.to_csv("./Data/merged/23-11-11_10-45_data_filtered_weather_elevation.csv", index=False)
