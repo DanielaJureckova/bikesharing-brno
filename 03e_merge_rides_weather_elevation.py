@@ -72,4 +72,4 @@ df_rides_weather = df_rides_weather[
 
 print(f"pocet po odstraneni odlehlych hodnot GPS: {len(df_rides_weather.index)} ")
 
-df_rides_weather.to_csv("./Data/merged/23-11-11_13-20_data_filtered_weather_elevation.csv", index=False)
+df_rides_weather.to_csv("./Data/merged/23-11-11_13-20_data_filtered_weather.csv", index=False)
