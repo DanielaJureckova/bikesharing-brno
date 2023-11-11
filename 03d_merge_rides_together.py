@@ -1,11 +1,11 @@
 import pandas as pd
 import datetime
+import numpy as np
 
-data22 = pd.read_csv(
-    './Data/merged/next_rekola_22.csv', header=0, delimiter=',')
-data23 = pd.read_csv(
-    './Data/merged/next_rekola_23.csv', header=0, delimiter=',')
+data22 = pd.read_csv('./Data/merged/next_rekola_22.csv', header=0, delimiter=',')
+data23 = pd.read_csv('./Data/merged/next_rekola_23.csv', header=0, delimiter=',')
 
+october23 = pd.read_csv('./Data/merged/next_rekola_23_october.csv', header=0, delimiter=',')
 
 def append_data_of_23_dataset(inputDf):
     inputDf['start_time'] = pd.to_datetime(
@@ -30,6 +30,7 @@ append_data_of_23_dataset(data23)
 
 columns_22 = data22.columns
 columns_23 = data23.columns
+columns_23_october = october23.columns
 
 # print(columns_22)
 # print(columns_23)
@@ -44,26 +45,27 @@ for column in columns_23:
         columns_23_to_drop.append(column)
         print(f"sloupec co neni v roce 22 je {column}")
 
-
+print(columns_22_to_drop)
+print(columns_23_to_drop)
 data22.drop(columns=columns_22_to_drop, axis=1, inplace=True)
 
-# print(data22)
-
-columns_to_convert = ['start_latitude', 'start_longitude', 'end_latitude', 'end_longitude']
-for column in columns_to_convert:
+columns_to_check = ['start_latitude', 'start_longitude', 'end_latitude', 'end_longitude']
+for column in columns_to_check:
     data22[column] = data22[column].apply(lambda x: float(str(x).replace(',', '.')))
     data23[column] = data23[column].apply(lambda x: float(str(x).replace(',', '.')))
-
-# print(data23.dtypes)
-# print(data23)
+    october23[column] = october23[column].apply(lambda x: float(str(x).replace(',', '.')))
 
 # data22.info()
 # data23.info()
+# october23.info()
 
-frames = [data22, data23]
+frames = [data22, data23, october23]
 result = pd.concat(frames)  
-result = result.dropna(subset=['start_longitude'])
 
+for column in columns_to_check:
+    result[column] = result[column].replace(0, np.nan)
+
+result = result.dropna(subset=columns_to_check)
 
 # print(result.dtypes)
 
@@ -71,7 +73,7 @@ result = result.dropna(subset=['start_longitude'])
 # print(rows_with_missing_values)
 
 # print(frames)
-result.to_csv("./Data/merged/next_rekola_both.csv", index=False)
+result.to_csv("./Data/merged/next_rekola_all.csv", index=False)
 
 #print(columns_22_to_drop)
 #print(columns_23_to_drop)
