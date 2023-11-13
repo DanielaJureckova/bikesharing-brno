@@ -9,10 +9,8 @@ import plotly.express as px
 st.set_page_config(
     page_title="Bikesharing Brno",
     page_icon="🚲",
-    layout="wide",
-)
+    layout="wide")
 
-palette = ['#024698', '#c54885', '#e32c83', '#bfa8cc', '#fbf9fc']
 
 ############
 ### DATA ###
@@ -22,8 +20,6 @@ stations_nextbike = pd.read_csv("official_nextbike_stations.csv")
 stations_rekola = pd.read_csv("official_rekola_stations.csv")
 stations_nextbike["company"] = "nextbike"
 stations_rekola["company"] = "rekola"
-stations = pd.concat([stations_nextbike, stations_rekola], axis = 0).reset_index(drop=True)
-
 
 #dataset_with start_end location separated
 dataset_start = data[['start_time', 'user_id', 'start_latitude',
@@ -42,9 +38,6 @@ dataset_end = dataset_end.rename(columns = {'end_time':'time', 'end_latitude':'l
        'end_longitude': 'longitude', 'end_location':'location', 'end_address':'address',
         'end_street':'street', "end_place": "place", 'end_elevation':'elevation'})
 dataset_start_end = pd.concat([dataset_start, dataset_end])
-
-
-
 
 nxt_par = False
 rek_par = False
@@ -143,8 +136,8 @@ data_all_filtered = data_company_year_filtered[data_company_year_filtered["month
 ################
 top_location = data_all_filtered.value_counts("street").nlargest(3) 
 
-row0_spacer1, row6_1, row6_spacer2 = st.columns((.2, 7.1, .2))
-with row6_1:
+row0_spacer1, row1_1, row1_spacer2 = st.columns((.2, 7.1, .2))
+with row1_1:
     st.subheader("📍 Nejpopulárnější lokality:")
 
 st.markdown("---")
@@ -191,19 +184,16 @@ with row_3_1:
          nxt_par = True
 
 with row_3_0: 
-    
-         
-    #plot map
+     
     st.plotly_chart(create_heatmap(map_data_start, nxt_par, rek_par))
 
 
 st.markdown("---")
 
-row4_spacer0, row4_1, row4_spacer2, row4_2, row4_spacer3 = st.columns((.2, 4, .2, 8 ,0.2))
+row4_spacer0, row4_1 = st.columns((.2, 4))
 with row4_1:
     st.subheader("Oficiální stanice: hodnocení podle počtu výpůjček:")
-
-    
+   
 
 row5_spacer0, row5_1, row5_spacer1, row5_2, row5_spacer2 = st.columns((.2, 2, .2, 7, .2))
 
@@ -270,7 +260,7 @@ with row6_2:
     st.plotly_chart(bar_low )
 
 st.write("????přidat komentář, že nemusí být směrodatné, poněvadž v určitých lokalitách jsou mohou být stanice blízko sebe a tak dojde k rozpadu??") 
-st.write("note: masterpiece by byl mít nějaký tooltip, který by následně zvýrazil bod do mapy, ale tam teda ještě nejsem :)") 
+st.write("note: masterpiece by byl mít nějaký tooltip, který by po najetí na bar chart následně zvýrazil bod do mapy, ale tam teda ještě nejsem :)") 
 
 
 
