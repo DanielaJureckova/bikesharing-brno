@@ -209,11 +209,11 @@ row5_spacer0, row5_1, row5_spacer1, row5_2, row5_spacer2 = st.columns((.2, 2, .2
 
 with row5_1:
     start_end_dict = {
-        "start": "půjčení kola",
-        "end": "vrácení kola",
+        "start": "začátek výpůjčky",
+        "end": "konec výpůjčky",
     }
 
-    start_end = st.selectbox("Půjčování vs. vracení:", ["půjčení kola", "vrácení kola", "vše"], index=0)
+    start_end = st.selectbox("Půjčování vs. vracení:", ["začátek výpůjčky", "konec výpůjčky", "vše"], index=0)
     if start_end == "vše":
         data_start_end_fil = data_all_filtered
     else:
