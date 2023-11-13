@@ -1,17 +1,7 @@
 import streamlit as st
 import pandas as pd
-import time 
+
 import plotly.express as px
-import matplotlib.pyplot as plt
-
-import folium
-from folium.plugins import HeatMap
-from streamlit_folium import st_folium
-
-from keplergl import KeplerGl
-
-
-from geopy.geocoders import Nominatim
 
 ##########################
 ### PAGE CONFIGURATION ###
@@ -92,7 +82,8 @@ def create_heatmap(data, n_par, r_par):
                 color = "company",
                 opacity = 0.5,
                 size_max = 0.25,
-                hover_data={'latitude':False, 'longitude':False, 'company':False},
+                hover_name = "place",
+                hover_data={"place": False,'latitude':False, 'longitude':False, 'company':False},
                 color_discrete_sequence=['#89CFF0']
             ).data[0])
 
@@ -104,7 +95,8 @@ def create_heatmap(data, n_par, r_par):
                 color = "company",
                 opacity = 0.5,
                 size_max = 0.25,
-                hover_data={'latitude':False, 'longitude':False, 'company':False},
+                hover_name = "place",
+                hover_data={"place": False, 'latitude':False, 'longitude':False, 'company':False},
                 color_discrete_sequence=['#ffb6c1']
             ).data[0])
 
@@ -276,6 +268,9 @@ with row6_2:
     hoverinfo='skip')
 
     st.plotly_chart(bar_low )
+
+st.write("????přidat komentář, že nemusí být směrodatné, poněvadž v určitých lokalitách jsou mohou být stanice blízko sebe a tak dojde k rozpadu??") 
+st.write("note: masterpiece by byl mít nějaký tooltip, který by následně zvýrazil bod do mapy, ale tam teda ještě nejsem :)") 
 
 
 
