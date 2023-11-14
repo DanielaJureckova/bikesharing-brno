@@ -21,4 +21,6 @@ df['month_name_cz'] = df['month'].map(month_name_cz)
 
 df["month_year"] = df["start_time"].dt.strftime('%m/%y')
 
-df.to_csv("./Data/merged/23-11-13_20-30_data_all.csv", index=False)
+df.drop(columns=['start_address','end_address'], inplace=True)
+
+df.to_csv("./Data/merged/23-11-13_21-45_no_address.csv", index=False)
