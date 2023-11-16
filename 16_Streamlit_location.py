@@ -344,7 +344,7 @@ with row_3_1:
     st.write(" ")
     st.write(" ")
     st.write(" ")
-    stations_to_show = st.selectbox("Zobraz oficiální stanice", ["nezobrazuj", "nextbike", "rekola", "nextbike + rekola"], index=0)
+    stations_to_show = st.selectbox("Zobraz mapu s oficiálními stanicemi:", ["nezobrazuj", "nextbike", "rekola", "nextbike + rekola"], index=0)
     if stations_to_show == "nextbike":
          nxt_par = True
     elif stations_to_show == "rekola":
@@ -355,7 +355,7 @@ with row_3_1:
 
 with row_3_0: 
      
-    keplergl_static(create_heatmap(map_data_start, nxt_par, rek_par))
+    keplergl_static(create_heatmap(map_data_start, nxt_par, rek_par), read_only = True)
 
 
 st.markdown("---")
