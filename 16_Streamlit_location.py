@@ -354,7 +354,7 @@ with row_3_1:
          nxt_par = True
 
 with row_3_0: 
-     
+    st.write("Heatmapa výpůjček sdílených kol") 
     keplergl_static(create_heatmap(map_data_start, nxt_par, rek_par), read_only = True)
 
 
