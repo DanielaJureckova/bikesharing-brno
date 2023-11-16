@@ -2,6 +2,9 @@ import streamlit as st
 import pandas as pd
 
 import plotly.express as px
+import streamlit as st
+from streamlit_keplergl import keplergl_static
+from keplergl import KeplerGl
 
 ##########################
 ### PAGE CONFIGURATION ###
@@ -46,58 +49,225 @@ rek_par = False
 ### FUNCTIONS ###
 #################
 
-def create_heatmap(data, n_par, r_par):
-        import plotly.express as px
-        st.write("Mapa nejvytíženějších lokalit:")
-        fig = px.density_mapbox(
-            map_data_start,
-            lat='latitude',
-            lon='longitude',
-            z = 'hustota výpůjček',
-            radius=55, 
-            center=dict(lat=49.19374, lon=16.60545),
-            zoom=14,
-            range_color=[-0.1, 0.5],
-            mapbox_style = "carto-darkmatter",  #open-street-map": Standardní OpenStreetMap dlaždicová mapa, "carto-positron" a "carto-darkmatter"
-            opacity = 0.6,
-            height = 600,
-            width = 850,
-            hover_name = 'address',
-            hover_data={'address': False, 'latitude': False, "longitude": False, "count": False,"hustota výpůjček":False },
-            labels={'address': 'address'},
-            color_continuous_scale='inferno') #Reds #thermal
-        
-        if nxt_par == True:
-            fig.add_trace(px.scatter_mapbox(
-                stations_nextbike,
-                lat='latitude',
-                lon='longitude',
-                color = "company",
-                opacity = 0.5,
-                size_max = 0.25,
-                hover_name = "place",
-                hover_data={"place": False,'latitude':False, 'longitude':False, 'company':False},
-                color_discrete_sequence=['#89CFF0']
-            ).data[0])
+def create_heatmap(kepler_data, nxt_par, rek_par):    
+    config = {'version': 'v1',
+    'config': {'visState': {'filters': [],
+    'layers': [{'id': '3fbk3hd',
+        'type': 'heatmap',
+        'config': {'dataId': 'all_data',
+        'label': 'heatmap',
+        'color': [136, 87, 44],
+        'highlightColor': [252, 242, 26, 255],
+        'columns': {'lat': 'latitude', 'lng': 'longitude'},
+        'isVisible': True,
+        'visConfig': {'opacity': 0.8,
+        'colorRange': {'name': 'Global Warming',
+            'type': 'sequential',
+            'category': 'Uber',
+            'colors': ['#5A1846',
+            '#900C3F',
+            '#C70039',
+            '#E3611C',
+            '#F1920E',
+            '#FFC300']},
+        'radius': 55.7},
+        'hidden': False,
+        'textLabel': [{'field': None,
+            'color': [255, 255, 255],
+            'size': 18,
+            'offset': [0, 0],
+            'anchor': 'start',
+            'alignment': 'center'}]},
+        'visualChannels': {'weightField': {'name': 'hustota výpůjček',
+        'type': 'real'},
+        'weightScale': 'linear'}},
+        {'id': 'ulpp2dk',
+        'type': 'point',
+        'config': {'dataId': 'rekola',
+        'label': 'rekola',
+        'color': [218, 112, 191],
+        'highlightColor': [252, 242, 26, 255],
+        'columns': {'lat': 'latitude', 'lng': 'longitude', 'altitude': None},
+        'isVisible': rek_par,
+        'visConfig': {'radius': 8,
+        'fixedRadius': False,
+        'opacity': 0.25,
+        'outline': False,
+        'thickness': 2,
+        'strokeColor': None,
+        'colorRange': {'name': 'Global Warming',
+            'type': 'sequential',
+            'category': 'Uber',
+            'colors': ['#5A1846',
+            '#900C3F',
+            '#C70039',
+            '#E3611C',
+            '#F1920E',
+            '#FFC300']},
+        'strokeColorRange': {'name': 'Global Warming',
+            'type': 'sequential',
+            'category': 'Uber',
+            'colors': ['#5A1846',
+            '#900C3F',
+            '#C70039',
+            '#E3611C',
+            '#F1920E',
+            '#FFC300']},
+        'radiusRange': [0, 50],
+        'filled': True},
+        'hidden': False,
+        'textLabel': [{'field': None,
+            'color': [255, 255, 255],
+            'size': 18,
+            'offset': [0, 0],
+            'anchor': 'start',
+            'alignment': 'center'}]},
+        'visualChannels': {'colorField': None,
+        'colorScale': 'quantile',
+        'strokeColorField': None,
+        'strokeColorScale': 'quantile',
+        'sizeField': None,
+        'sizeScale': 'linear'}},
+        {'id': 'jyed6bj',
+        'type': 'point',
+        'config': {'dataId': 'nextbike',
+        'label': 'nextbike',
+        'color': [59, 133, 204],
+        'highlightColor': [252, 242, 26, 255],
+        'columns': {'lat': 'latitude', 'lng': 'longitude', 'altitude': None},
+        'isVisible': nxt_par,
+        'visConfig': {'radius': 8,
+        'fixedRadius': False,
+        'opacity': 0.25,
+        'outline': False,
+        'thickness': 2,
+        'strokeColor': None,
+        'colorRange': {'name': 'Global Warming',
+            'type': 'sequential',
+            'category': 'Uber',
+            'colors': ['#5A1846',
+            '#900C3F',
+            '#C70039',
+            '#E3611C',
+            '#F1920E',
+            '#FFC300']},
+        'strokeColorRange': {'name': 'Global Warming',
+            'type': 'sequential',
+            'category': 'Uber',
+            'colors': ['#5A1846',
+            '#900C3F',
+            '#C70039',
+            '#E3611C',
+            '#F1920E',
+            '#FFC300']},
+        'radiusRange': [0, 50],
+        'filled': True},
+        'hidden': False,
+        'textLabel': [{'field': None,
+            'color': [255, 255, 255],
+            'size': 18,
+            'offset': [0, 0],
+            'anchor': 'start',
+            'alignment': 'center'}]},
+        'visualChannels': {'colorField': None,
+        'colorScale': 'quantile',
+        'strokeColorField': None,
+        'strokeColorScale': 'quantile',
+        'sizeField': None,
+        'sizeScale': 'linear'}},
+        {'id': 'aytb9p9',
+        'type': 'point',
+        'config': {'dataId': 'all_data',
+        'label': 'locations',
+        'color': [231, 159, 213],
+        'highlightColor': [252, 242, 26, 255],
+        'columns': {'lat': 'latitude', 'lng': 'longitude', 'altitude': None},
+        'isVisible': True,
+        'visConfig': {'radius': 10,
+        'fixedRadius': False,
+        'opacity': 0,
+        'outline': False,
+        'thickness': 2,
+        'strokeColor': None,
+        'colorRange': {'name': 'Global Warming',
+            'type': 'sequential',
+            'category': 'Uber',
+            'colors': ['#5A1846',
+            '#900C3F',
+            '#C70039',
+            '#E3611C',
+            '#F1920E',
+            '#FFC300']},
+        'strokeColorRange': {'name': 'Global Warming',
+            'type': 'sequential',
+            'category': 'Uber',
+            'colors': ['#5A1846',
+            '#900C3F',
+            '#C70039',
+            '#E3611C',
+            '#F1920E',
+            '#FFC300']},
+        'radiusRange': [0, 50],
+        'filled': True},
+        'hidden': False,
+        'textLabel': [{'field': None,
+            'color': [255, 255, 255],
+            'size': 18,
+            'offset': [0, 0],
+            'anchor': 'start',
+            'alignment': 'center'}]},
+        'visualChannels': {'colorField': None,
+        'colorScale': 'quantile',
+        'strokeColorField': None,
+        'strokeColorScale': 'quantile',
+        'sizeField': None,
+        'sizeScale': 'linear'}}],
+    'interactionConfig': {'tooltip': {'fieldsToShow': {'all_data': [{'name': 'address',
+            'format': None}],
+        'rekola': [{'name': 'place', 'format': None}],
+        'nextbike': [{'name': 'place', 'format': None}]},
+        'compareMode': False,
+        'compareType': 'absolute',
+        'enabled': True},
+        'brush': {'size': 0.5, 'enabled': False},
+        'geocoder': {'enabled': False},
+        'coordinate': {'enabled': False}},
+    'layerBlending': 'normal',
+    'splitMaps': [],
+    'animationConfig': {'currentTime': None, 'speed': 1}},
+    'mapState': {'bearing': 0,
+    'dragRotate': False,
+    'latitude': 49.198073396065475,
+    'longitude': 16.606715650106903,
+    'pitch': 0,
+    'zoom': 13.258770704349452,
+    'isSplit': False},
+    'mapStyle': {'styleType': 'dark',
+    'topLayerGroups': {},
+    'visibleLayerGroups': {'label': True,
+        'road': True,
+        'border': False,
+        'building': True,
+        'water': True,
+        'land': True,
+        '3d building': False},
+    'threeDBuildingColor': [9.665468314072013,
+        17.18305478057247,
+        31.1442867897876],
+    'mapStyles': {}}}}
 
-        if rek_par == True:
-            fig.add_trace(px.scatter_mapbox(
-                stations_rekola,
-                lat='latitude',
-                lon='longitude',
-                color = "company",
-                opacity = 0.5,
-                size_max = 0.25,
-                hover_name = "place",
-                hover_data={"place": False, 'latitude':False, 'longitude':False, 'company':False},
-                color_discrete_sequence=['#ffb6c1']
-            ).data[0])
+    keplermap = KeplerGl(height=700, config = config)
+    keplermap.add_data(data = kepler_data, name='all_data')
 
-        fig.update_coloraxes(showscale=False)
-        fig.update_layout( margin=dict(l=0, r=0, t=3, b=0))
-        fig.update_layout(showlegend=False) 
+    #vyhodit někam ven
+    nextbike_stations = pd.read_csv("official_nextbike_stations.csv")
+    rekola_stations = pd.read_csv("official_rekola_stations.csv")
 
-        return fig
+    keplermap.add_data(data = rekola_stations, name='rekola')
+
+    keplermap.add_data(data = nextbike_stations, name='nextbike')
+
+    return keplermap
 
 #################
 ### FILTERING ###
@@ -185,7 +355,7 @@ with row_3_1:
 
 with row_3_0: 
      
-    st.plotly_chart(create_heatmap(map_data_start, nxt_par, rek_par))
+    keplergl_static(create_heatmap(map_data_start, nxt_par, rek_par))
 
 
 st.markdown("---")
@@ -210,7 +380,7 @@ with row5_1:
         data_start_end_fil = data_all_filtered[data_all_filtered["start_end"].map(start_end_dict) == start_end]
 
 
-row6_spacer0, row6_1, row6_spacer1, row6_2, row6_spacer2 = st.columns((.2, 4, .2, 3, .2))
+row6_spacer0, row6_1, row6_spacer1 = st.columns((.2, 6, .2))
 
 with row6_1:
     top_stations = data_start_end_fil.value_counts("place").nlargest(10).index.tolist() 
@@ -235,32 +405,6 @@ with row6_1:
     hoverinfo='skip')
 
     st.plotly_chart(bar_top )
-
-with row6_2:
-    low_stations = data_start_end_fil.value_counts("place").nsmallest(10).index.tolist() 
-    low10 = data_start_end_fil[data_start_end_fil["place"].isin(low_stations)]
-    st.write("Nejopuštěnější stanice:")
-    bar_low = px.bar(low10, 
-                     y = "place", 
-                     orientation='h', 
-                     color= "company", 
-                     hover_data = {"place":False, "company":False},
-                     color_discrete_map = {"rekola":'deeppink', "nextbike":"navy"}, 
-                     category_orders={"place": low10.value_counts("place").sort_values(ascending=True).index})
-    bar_low.update_layout(
-        xaxis_title = "",
-        yaxis_title = "", 
-        margin=dict(l=0, r=0, t=3, b=0),
-        legend_title = None,
-        width = 500,
-        )
-    bar_low.update_traces(hovertemplate=None,
-    hoverinfo='skip')
-
-    st.plotly_chart(bar_low )
-
-st.write("????přidat komentář, že nemusí být směrodatné, poněvadž v určitých lokalitách jsou mohou být stanice blízko sebe a tak dojde k rozpadu??") 
-st.write("note: masterpiece by byl mít nějaký tooltip, který by po najetí na bar chart následně zvýrazil bod do mapy, ale tam teda ještě nejsem :)") 
 
 
 
