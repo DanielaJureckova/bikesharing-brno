@@ -47,7 +47,7 @@ average_occupancy_1_0 = data_filtered[["station_id", "occupancy"]].groupby(by = 
 
 station_avg_occ = average_occupancy_1_0.sort_values(by="occupancy", ascending=True)
 occ_and_elev = pd.merge(station_avg_occ, official, on='station_id', how='inner')
-
+occ_and_elev['occupancy'] = (occ_and_elev['occupancy']*100).round(2)
 
 #page
 st.subheader("Obsazenost stanic společnosti Nextbike")
@@ -58,9 +58,9 @@ st.markdown("---")
 
 col2_spacer0, col2_1, col2_spacer1, col2_2, col2_spacer2, col2_3, col2_spacer3   = st.columns((1, 1.5, 0.2, 0.5, .2, 2, .2))
 
-occ_90more = occ_and_elev[occ_and_elev['occupancy']>0.9]
-occ_20less = occ_and_elev[occ_and_elev['occupancy']<0.2]
-occ_50more = occ_and_elev[occ_and_elev['occupancy']>0.5]
+occ_90more = occ_and_elev[occ_and_elev['occupancy']>90]
+occ_20less = occ_and_elev[occ_and_elev['occupancy']<20]
+occ_50more = occ_and_elev[occ_and_elev['occupancy']>50]
 
 with col2_1:
     st.write("📍")
@@ -88,8 +88,8 @@ st.subheader("Obsazenost vybrané stanice:")
 col3_spacer0, col3_1, col3_spacer1, col3_2, col3_spacer1 = st.columns((.2, 3, 1, 3, 0.2))
 
 with col3_1:
-    sel_place = st.selectbox("Vyber stanici:", occ_and_elev["place"], label_visibility = "hidden" )
-value = round((occ_and_elev.loc[occ_and_elev['place'] == sel_place, 'occupancy'].values[0]*100), 2)
+    sel_place = st.selectbox("Vyber stanici:", occ_and_elev["place"].sort_values(), label_visibility = "hidden" )
+value = round((occ_and_elev.loc[occ_and_elev['place'] == sel_place, 'occupancy'].values[0]), 2)
 with col3_2:
   st.metric("Obsazenost:", f"{value} %", label_visibility="hidden")
 
@@ -100,8 +100,8 @@ st.subheader("Mapa obsazenosti:")
 row4_spacer0, row4_1, row4_spacer1, row4_2, row4_spacer2   = st.columns((.2, 3, 1, 3, 0.2))
 with row4_1:
     occupancy_set = st.slider("Rozsah obsazenosti (%):", 0, 100, (0,100),)
-occupancy_set_low = occupancy_set[0]/100
-occupancy_set_high = occupancy_set[1]/100 
+occupancy_set_low = occupancy_set[0]
+occupancy_set_high = occupancy_set[1]
 occupancy_dif = occupancy_set[1] - occupancy_set[0]
 
 data_kepler = occ_and_elev[(occ_and_elev["occupancy"]>=occupancy_set_low)&(occ_and_elev["occupancy"]<=occupancy_set_high)]
