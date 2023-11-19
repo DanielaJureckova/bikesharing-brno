@@ -29,17 +29,15 @@ start_hour, end_hour = hour_range
 filtered_h_data = stations[
     (stations["date-time"].dt.hour >= start_hour) & (stations["date-time"].dt.hour <= end_hour)]
 
-
 day_type = st.sidebar.selectbox("víkend vs. všední dny", ["víkendy", "všední dny", "vše"])
-
 
 # Filtr podle vybraného typu dne
 if day_type == "všední dny":
     data_filtered = filtered_h_data[filtered_h_data['date-time'].dt.dayofweek < 5]  
-elif day_type == 'Víkendy':
-    data_filtered = filtered_h_data[filtered_h_data['date-time"'].dt.dayofweek >= 5]  # 5-6 reprezentuje sobotu a neděli
-else:
-    data_filtered = filtered_h_data  # Zobrazí všechny dny
+elif day_type == "víkendy":
+    data_filtered = filtered_h_data[filtered_h_data['date-time'].dt.dayofweek >= 5]  
+elif day_type == 'vše':
+    data_filtered = filtered_h_data  
 
 
 
