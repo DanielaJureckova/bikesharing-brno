@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-df = pd.read_csv("Data/23-11-14_20-40_address_id.csv")
+df = pd.read_csv("Data/merged/23-11-14_20-40_address_id.csv")
 
 day_name_cz = {
     0: 'Pondělí', 1: 'Úterý', 2: 'Středa',
