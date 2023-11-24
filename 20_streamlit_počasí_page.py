@@ -24,6 +24,15 @@ def rozdel_teplotu(teplota):
     elif teplota > 30 :
         return '30+'
 
+def rozdel_uhrn(rain):
+    if rain == 0:
+        return "sucho"
+    elif rain <= 1:
+        return 'mírný déšť (do 1 mm)'
+    elif rain >  1:
+        return 'silnější déšť (1 mm a více)'
+
+
 def load_data():
     df = pd.read_csv("data/23-11-18_15-30_adresses_places_id.csv")
     df['start_time'] = pd.to_datetime(df['start_time'])
@@ -132,6 +141,7 @@ with filter_column:
         y_axis = 'duration_minutes'
         filtered=['round_temperature']
         df_graph = filtered_data.groupby(filtered)['duration_min'].sum().reset_index(name=y_axis)
+    #novinky - nutno 
     elif graph_options == "Průměrná délka jízdy - grouped":
         rental_length = filtered_data[~((filtered_data["duration_min"]>100)&(filtered_data["round_temperature"] == 0))]
         rental_length['temp_int'] = rental_length['temperature_2m (°C)'].apply(rozdel_teplotu)
@@ -140,6 +150,7 @@ with filter_column:
         y_axis = 'average_ride_length'
         data_grouped = rental_length.groupby('Sorted_temp_int')['duration_min'].mean().reset_index(name=y_axis)
         df_graph = data_grouped
+    
     elif graph_options == "Hodinový počet výpůjček vs. teplota":
         temp_data = filtered_merged_data[["round_temperature", "rental_number"]].groupby("round_temperature").mean().reset_index()
         y_axis = "rental_number"
@@ -206,22 +217,28 @@ fig_day_night = px.bar(
 )
 
 
+#alternative graph: with normalization
+rain_data = filtered_merged_data[['rental_number', "rain (mm)"]]
+rain_data["rain_int"] = rain_data['rain (mm)'].apply(rozdel_uhrn)
+intervaly = ['sucho','mírný déšť (do 1 mm)', 'silnější déšť (1 mm a více)' ]
+rain_data['sorted_rain_int'] = pd.Categorical(rain_data['rain_int'], categories=intervaly, ordered=True)
+rain_data = rain_data[["rental_number", "sorted_rain_int"]].groupby("sorted_rain_int").mean().reset_index()
 
-merged_data["rain_yes_no"] = True
-mask = merged_data["rain (mm)"] == 0
-merged_data.loc[mask, "rain_yes_no"] = False
+fig_rain_dry = px.bar(rain_data, x = 'sorted_rain_int', y ='rental_number')
+fig_rain_dry.update_layout(xaxis_title='srážkový úhrn za hodinu', yaxis_title='Průměrný hodinový počet výpůjček', title='Déšť vs. sucho: průměrné hodinové počty výpůjček ')
 
-mean_rain = merged_data[merged_data["rain_yes_no"]]['rental_number'].mean().round(0)
-mean_dry = merged_data[~merged_data["rain_yes_no"]]['rental_number'].mean().round(0)
-
-data_for_plot = {
-    'Kategorie': ['Deštivé hodiny', 'Nedeštivé hodiny'],
-    'Průměrný počet výpůjček': [mean_rain, mean_dry]
-}
-
-df_for_plot = pd.DataFrame(data_for_plot)
-fig_rain_dry = px.bar(df_for_plot, x='Kategorie', y='Průměrný počet výpůjček', barmode='group')
-fig_rain_dry.update_layout(xaxis_title='Kategorie', yaxis_title='Průměrný hodinový počet výpůjček', title='Průměr výpůjček podle počasí')
+#rozpad na hodiny
+rainy = filtered_merged_data[filtered_merged_data["rain (mm)"] > 0]
+dry = filtered_merged_data[filtered_merged_data["rain (mm)"] == 0]
+prumer_vypujcek_dry = dry.groupby(dry['time'].dt.hour)['rental_number'].mean()
+prumer_vypujcek_rain = rainy.groupby(rainy['time'].dt.hour)['rental_number'].mean()
+rentals_rain_time = pd.merge(prumer_vypujcek_dry, prumer_vypujcek_rain, on = "time")
+rentals_rain_time.rename(columns={"rental_number_x": "sucho", "rental_number_y": "deštivo"}, inplace=True)
+rentals_rain_time.reset_index(inplace=True)
+fig_rain_dry_hour = px.line(rentals_rain_time, x='time', y=['sucho', 'deštivo'],
+              labels={'time': 'Hodina', 'value': 'Průměrný hodinový počet výpůjček'},
+              title='Déšť vs. sucho: hodinově')
+fig_rain_dry_hour.update_layout(legend_title_text= " ")
 
 
 #option for fig
@@ -229,7 +246,7 @@ filter_column, middle_spacer, fig_column, back_spacer = st.columns((0.5, 0.2, 0.
 with filter_column:
     option_fig = st.selectbox(
         'Vyber parametr pro srovnání',
-        ('Déšť vs. Sucho celkem', 'Déšť vs. Sucho průměr', 'Den vs. Noc')
+        ('Déšť vs. Sucho celkem', 'Déšť vs. Sucho průměr','Déšť vs. Sucho průměr - hodinově', 'Den vs. Noc')
     )
 
 with fig_column:
@@ -237,8 +254,7 @@ with fig_column:
         st.plotly_chart(fig_rain)
     elif option_fig == 'Den vs. Noc':
         st.plotly_chart(fig_day_night)
+    elif option_fig == 'Déšť vs. Sucho průměr - hodinově':
+        st.plotly_chart(fig_rain_dry_hour)
     elif option_fig == 'Déšť vs. Sucho průměr':
         st.plotly_chart(fig_rain_dry)
-
-
-#
