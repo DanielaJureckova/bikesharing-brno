@@ -8,21 +8,21 @@ palette = ['#024698', '#c54885', '#e32c83', '#bfa8cc', '#fbf9fc']
 st.title('Sdílená kola v Brně')
 st.markdown('---')
 
-def rozdel_teplotu(teplota):
-    if teplota <= 5:
-        return '< 5'
-    elif teplota > 5 and teplota <= 10:
-        return '5-10'
-    elif teplota > 10 and teplota <= 15:
-        return '10-15'
-    elif teplota > 15 and teplota <= 20:
-        return '15-20'
-    elif teplota > 20 and teplota <= 25:
-        return '20-25'
-    elif teplota > 25 and teplota <= 30:
-        return '25-30'
-    elif teplota > 30 :
-        return '30+'
+# def rozdel_teplotu(teplota):
+#     if teplota <= 5:
+#         return '< 5'
+#     elif teplota > 5 and teplota <= 10:
+#         return '5-10'
+#     elif teplota > 10 and teplota <= 15:
+#         return '10-15'
+#     elif teplota > 15 and teplota <= 20:
+#         return '15-20'
+#     elif teplota > 20 and teplota <= 25:
+#         return '20-25'
+#     elif teplota > 25 and teplota <= 30:
+#         return '25-30'
+#     elif teplota > 30 :
+#         return '30+'
 
 def rozdel_uhrn(rain):
     if rain == 0:
@@ -121,7 +121,7 @@ filtered_merged_data = filtered_merged_data[(filtered_merged_data['round_tempera
 filter_column, middle_spacer, fig_column, back_spacer = st.columns((0.5, 0.2, 0.5, 1))
 
 with filter_column:
-    graph_options = st.selectbox("Vyber metriku", ("Průměrná délka jízdy","Průměrná délka jízdy - grouped", "Počet jízd", "Počet uživatelů","Najetý čas", "Hodinový počet výpůjček vs. teplota"))
+    graph_options = st.selectbox("Vyber metriku", ("Průměrná délka jízdy", "Počet jízd - celkem","Počet jízd - hodinový průměr", "Počet uživatelů - celkem","Najetý čas - celkem"))
     filtered = ''
 
     if graph_options == "Průměrná délka jízdy":
@@ -129,29 +129,19 @@ with filter_column:
         y_axis = 'average_ride_length'
         filtered =['round_temperature']
         df_graph = rental_length.groupby(filtered)['duration_min'].mean().reset_index(name=y_axis)
-    elif graph_options == "Počet jízd":
+    elif graph_options == "Počet jízd - celkem":
         y_axis = 'rides_number'
         filtered=['round_temperature']
         df_graph = filtered_data.groupby(filtered).size().reset_index(name=y_axis)
-    elif graph_options == "Počet uživatelů":
+    elif graph_options == "Počet uživatelů - celkem":
         y_axis = 'total_users'
         filtered=['round_temperature']
         df_graph = filtered_data.groupby(filtered)['user_id'].nunique().reset_index(name=y_axis)
-    elif graph_options == "Najetý čas":
+    elif graph_options == "Najetý čas - celkem":
         y_axis = 'duration_minutes'
         filtered=['round_temperature']
-        df_graph = filtered_data.groupby(filtered)['duration_min'].sum().reset_index(name=y_axis)
-    #novinky - nutno 
-    elif graph_options == "Průměrná délka jízdy - grouped":
-        rental_length = filtered_data[~((filtered_data["duration_min"]>100)&(filtered_data["round_temperature"] == 0))]
-        rental_length['temp_int'] = rental_length['temperature_2m (°C)'].apply(rozdel_teplotu)
-        intervaly = ["< 5", "5-10", "10-15", "15-20", "20-25", "25-30", "30+"]
-        rental_length['Sorted_temp_int'] = pd.Categorical(rental_length['temp_int'], categories=intervaly, ordered=True)
-        y_axis = 'average_ride_length'
-        data_grouped = rental_length.groupby('Sorted_temp_int')['duration_min'].mean().reset_index(name=y_axis)
-        df_graph = data_grouped
-    
-    elif graph_options == "Hodinový počet výpůjček vs. teplota":
+        df_graph = filtered_data.groupby(filtered)['duration_min'].sum().reset_index(name=y_axis)    
+    elif graph_options == "Počet jízd - hodinový průměr":
         temp_data = filtered_merged_data[["round_temperature", "rental_number"]].groupby("round_temperature").mean().reset_index()
         y_axis = "rental_number"
         df_graph = temp_data
@@ -159,35 +149,26 @@ with filter_column:
 
 
 with fig_column:
-    if graph_options in ["Průměrná délka jízdy", "Počet jízd", "Počet uživatelů","Najetý čas", "Hodinový počet výpůjček vs. teplota"]:
-        fig = px.bar(
-            df_graph,
-            x='round_temperature',
-            y=y_axis,
-            labels={'round_temperature': 'Teplota (°C)', 'duration_min': 'Délka jízdy (min)', 'average_ride_length' : "Průměrná délka jízdy",
-                'rides_number' : "Počet jízd", 'total_users' : "Počet uživatelů", 'duration_minutes' : "Celkový čas", "rental_number": "výpůjčky za hodinu"  }
-        )
+    fig = px.bar(
+        df_graph,
+        x='round_temperature',
+        y=y_axis, color = "round_temperature",
+        color_continuous_scale='darkmint',
+        labels={'round_temperature': 'Teplota (°C)', 'duration_min': 'Délka jízdy (min)', 'average_ride_length' : "Průměrná délka jízdy",
+            'rides_number' : "Počet jízd", 'total_users' : "Počet uživatelů", 'duration_minutes' : "Celkový čas", "rental_number": "výpůjčky za hodinu"  }
+    )
 
-        if graph_options == "Průměrná délka jízdy":
-            fig.update_layout(title="Vliv teploty na průměrnou délku jízdy")
-        elif graph_options == "Počet jízd":
-            fig.update_layout(title="Vliv teploty na počet jízd")
-        elif graph_options == "Počet uživatelů":
-            fig.update_layout(title="Vliv teploty na počet uživatelů")
-        elif graph_options == "Najetý čas":
-            fig.update_layout(title="Vliv teploty na celkovou najetou dobu")
-        elif graph_options == "Hodinový počet výpůjček vs. teplota":
-            fig.update_layout(title="Vliv teploty na průměrný hodinový počet jízd")
-
-
-    if graph_options in ["Průměrná délka jízdy - grouped"]:
-        fig = px.bar(
-            df_graph,
-            x='Sorted_temp_int',
-            y=y_axis,
-            labels={'Sorted_temp_int': 'Teplota (°C)', 'average_ride_length' : "Průměrná délka jízdy", }
-        )
+    if graph_options == "Průměrná délka jízdy":
         fig.update_layout(title="Vliv teploty na průměrnou délku jízdy")
+    elif graph_options == "Počet jízd - celkem":
+        fig.update_layout(title="Vliv teploty na počet jízd")
+    elif graph_options == "Počet uživatelů - celkem":
+        fig.update_layout(title="Vliv teploty na počet uživatelů")
+    elif graph_options == "Najetý čas - celkem":
+        fig.update_layout(title="Vliv teploty na celkovou najetou dobu")
+    elif graph_options == "Počet jízd - hodinový průměr":
+        fig.update_layout(title="Vliv teploty na průměrný hodinový počet jízd")
+
 
     st.plotly_chart(fig)
         
@@ -202,9 +183,12 @@ rides_without_rain = filtered_data[filtered_data['rain (mm)'] == 0].shape[0]
 fig_rain = px.bar(
     x=['Jízdy za deště','Jízdy za sucha'],
     y=[rides_with_rain, rides_without_rain],
+    color = ['Jízdy za deště','Jízdy za sucha'],
+    color_discrete_map = {'Jízdy za deště':'#86C3B3', 'Jízdy za sucha':'#235F73'},
     labels={'x': 'Typ počasí', 'y': 'Počet jízd'},
     title='Počet jízd za deště vs. za sucha'
 )
+fig_rain.update_layout(legend_title_text= None)
 
 day_rides = filtered_data[filtered_data['is_day']].shape[0]
 night_rides = filtered_data[~filtered_data['is_day']].shape[0]
@@ -212,9 +196,13 @@ night_rides = filtered_data[~filtered_data['is_day']].shape[0]
 fig_day_night = px.bar(
     x=['Denní jízdy', 'Noční jízdy'],
     y=[day_rides, night_rides],
+    color = ['Denní jízdy', 'Noční jízdy'],
+    color_discrete_map = {'Denní jízdy':'#86C3B3', 'Noční jízdy':'#235F73'},
     labels={'x': 'Denní doba', 'y': 'Počet jízd'},
     title='Počet jízd během dne vs. v noci'
 )
+fig_day_night.update_layout(legend_title_text= None)
+
 
 
 #alternative graph: with normalization
@@ -224,8 +212,10 @@ intervaly = ['sucho','mírný déšť (do 1 mm)', 'silnější déšť (1 mm a v
 rain_data['sorted_rain_int'] = pd.Categorical(rain_data['rain_int'], categories=intervaly, ordered=True)
 rain_data = rain_data[["rental_number", "sorted_rain_int"]].groupby("sorted_rain_int").mean().reset_index()
 
-fig_rain_dry = px.bar(rain_data, x = 'sorted_rain_int', y ='rental_number')
+fig_rain_dry = px.bar(rain_data, x = 'sorted_rain_int', y ='rental_number', color = 'sorted_rain_int', color_discrete_map= {'sucho':'#AADEC4','mírný déšť (do 1 mm)':'#86C3B3', 'silnější déšť (1 mm a více)':'#235F73'})
 fig_rain_dry.update_layout(xaxis_title='srážkový úhrn za hodinu', yaxis_title='Průměrný hodinový počet výpůjček', title='Déšť vs. sucho: průměrné hodinové počty výpůjček ')
+fig_rain_dry.update_layout(legend_title_text= None)
+
 
 #rozpad na hodiny
 rainy = filtered_merged_data[filtered_merged_data["rain (mm)"] > 0]
@@ -235,10 +225,10 @@ prumer_vypujcek_rain = rainy.groupby(rainy['time'].dt.hour)['rental_number'].mea
 rentals_rain_time = pd.merge(prumer_vypujcek_dry, prumer_vypujcek_rain, on = "time")
 rentals_rain_time.rename(columns={"rental_number_x": "sucho", "rental_number_y": "deštivo"}, inplace=True)
 rentals_rain_time.reset_index(inplace=True)
-fig_rain_dry_hour = px.line(rentals_rain_time, x='time', y=['sucho', 'deštivo'],
+fig_rain_dry_hour = px.line(rentals_rain_time, x='time', y=['sucho', 'deštivo'],color_discrete_sequence=['#86C3B3', '#235F73'],
               labels={'time': 'Hodina', 'value': 'Průměrný hodinový počet výpůjček'},
               title='Déšť vs. sucho: hodinově')
-fig_rain_dry_hour.update_layout(legend_title_text= " ")
+fig_rain_dry_hour.update_layout(legend_title_text= None)
 
 
 #option for fig
