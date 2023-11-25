@@ -2,7 +2,7 @@ import pandas as pd
 import csv
 
 
-data_file = "data.csv"
+data_file = "data_09_11.csv"
 
 #get all bikes
 bikes_data = pd.read_csv(data_file)
@@ -56,7 +56,7 @@ for bike in list_of_bikes:
                 trips.append(trip)
 
 #save trips to csv file
-with open("trips.csv", 'w', newline='') as csv_file:
+with open("trips_09_11.csv", 'w', newline='') as csv_file:
     csv_writer = csv.writer(csv_file)
     # Write each row to the CSV file
     for row in trips:

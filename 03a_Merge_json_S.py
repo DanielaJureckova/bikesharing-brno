@@ -12,7 +12,7 @@ data.append(["date", "time","uid", "lat", "lng", "bike", "name", "address", "num
 
 
 # assign directory
-directory = 'json'
+directory = 'data/json'
  
 # iterate over files in directory
 for filename in os.listdir(directory):
@@ -21,7 +21,7 @@ for filename in os.listdir(directory):
     if filename.endswith(".json"): 
         
         #extracting important information
-        with open(("./json/"+filename), mode="r", encoding="utf-8") as file:
+        with open(("./data/json/"+filename), mode="r", encoding="utf-8") as file:
             file_content = json.load(file)
             city = file_content['countries'][0]['cities'][0]
             places = city['places']
@@ -48,7 +48,7 @@ for filename in os.listdir(directory):
                 data.append(single_data)
 
 #save datafile                
-with open("data.csv", mode = "w", encoding = "utf-8") as output_file:
+with open("data_occupancy_map.csv", mode = "w", encoding = "utf-8") as output_file:
     writer = csv.writer(output_file)
     for row in data:
         writer.writerow(row)

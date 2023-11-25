@@ -3,8 +3,8 @@
 import requests
 
 base_url = "https://maps.googleapis.com/maps/api/elevation/json"
-api_key = "tady má být API key"
-location = "49.192043,16.609182"  
+api_key = "inser API key here"
+location = "insert location"  
 
 url = f"{base_url}?locations={location}&key={api_key}"
 response = requests.get(url)
