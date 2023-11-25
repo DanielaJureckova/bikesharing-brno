@@ -62,6 +62,7 @@ new_data = new_data[['start_time', 'end_time', 'user_id', 'start_latitude',
        'day_of_week', 'day_name_cz', 'month_name_cz', 'month_year',
        'start_address_id', 'end_address_id','start_place','end_place', 'start_dist','end_dist', 'round_temperature']]
 
+
 places = pd.read_csv("data/places.csv")
 new_data_places1 = pd.merge(new_data, places, how = 'left', left_on = "start_place", right_on = "place")
 new_data_places1 = new_data_places1.rename(columns={"place_id":"start_place_id"})
@@ -73,6 +74,7 @@ new_data_places = new_data_places.rename(columns={"place_id":"end_place_id"})
 
 new_data_places.drop(columns=["place", "ID"], inplace = True)
 
+#replace distant assignments with NA
 mask_st = new_data_places["start_dist"] > 0.002
 mask_en = new_data_places["end_dist"] > 0.002
 
@@ -82,22 +84,7 @@ new_data_places.loc[mask_st, 'start_place_id'] = pd.NA
 new_data_places.loc[mask_en, 'end_place'] = pd.NA
 new_data_places.loc[mask_en, 'end_place_id'] = pd.NA
 
-
 new_data_places.drop(columns=['start_dist', 'end_dist'], inplace = True)
-
-
-
-new_data_places = new_data_places[['start_time', 'end_time', 'user_id', 'start_latitude',
-       'start_longitude', 'end_latitude', 'end_longitude', 'company',
-       'duration_min', 'temperature_2m (°C)', 'rain (mm)', 'snowfall (cm)',
-       'wind_speed_10m (km/h)', 'wind_gusts_10m (km/h)', 'is_day ()', 'year',
-       'month', 'day', 'hour', 'start_street', 'end_street', 'start_location',
-       'end_location', 'start_elevation', 'end_elevation', 'elevation_dif',
-       'day_of_week', 'day_name_cz', 'month_name_cz', 'month_year',
-       'start_address_id', 'end_address_id', 'start_place_id', 'end_place_id',
-       'round_temperature', 'start_place', 'end_place']]
-
-new_data_places.to_csv("23-11-18_15-30_adresses_places_id_val.csv", index = False)
 
 new_data_places = new_data_places[['start_time', 'end_time', 'user_id', 'start_latitude',
        'start_longitude', 'end_latitude', 'end_longitude', 'company',
