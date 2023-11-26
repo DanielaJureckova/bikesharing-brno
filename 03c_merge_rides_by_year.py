@@ -1,9 +1,6 @@
-import os
-import csv
 import pandas as pd
-import datetime
 
-merge_22 = False
+merge_22 = True
 merge23 = True
 renamingForNextBike = {'start_lat': "start_latitude",
                        "start_lng": "start_longitude",

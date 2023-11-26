@@ -1,8 +1,6 @@
 # extracts all latitude/longitude coordinates from rekola/nextbike 22/23 datasets and groups them together, adds elevation and street/address of location 
-
-import geopy        
+      
 import pandas as pd
-import csv
 from geopy.geocoders import Nominatim
 from geopy.distance import geodesic
 import requests
